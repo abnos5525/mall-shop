@@ -22,13 +22,6 @@ The product does **not** own inventory, process customer checkout, ship goods, o
 
 This is a **small, independently deployable API + worker architecture**, not a premature fleet of tiny services. Keep business domains modular so they can be extracted later if load/team boundaries justify it.
 
-## Start here
-1. Open this folder (`mall-shop`) in Cursor.
-2. Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/ROADMAP.md`.
-3. Open `PROMPT.md` and paste its **Initial Prompt** into Cursor Agent using Grok.
-4. The agent must implement **Phase 1 only**, verify it, update `docs/PROGRESS.md`, then stop.
-5. To authorize exactly one next phase, send exactly: `برو بعدی`.
-
 ## Important
 - Do not assume affiliate approval, commission rates, partner APIs, or tracking support. Treat them as configuration verified with each partner.
 - Never claim a sale/commission unless a partner report or manually verified evidence confirms it.
