@@ -1,0 +1,41 @@
+# Security checklist
+
+- [ ] Telegram raw initData validated server-side with bot token; stale auth_date rejected.
+- [ ] initDataUnsafe never used as authentication proof.
+- [ ] Secrets only in backend environment; no secrets in frontend bundle.
+- [ ] Admin authorization derived server-side.
+- [ ] DTO validation and output serialization in API.
+- [ ] Rate limits on auth, demand submission, and outbound redirect.
+- [ ] Outbound URLs restricted to http/https and stored by admin; no arbitrary open redirect.
+- [ ] Cookies/session secure, HttpOnly, SameSite policy documented; CSRF protection considered for cookie-authenticated mutations.
+- [ ] Logs redact initData, bot token, cookies, authorization headers, and personal data.
+- [ ] Database access only from backend.
+- [ ] User consent before notifications or lead forwarding.
+- [ ] Affiliate/sponsored disclosure visible.
+- [ ] Admin changes audited.
+- [ ] Swagger disabled by default in production; if enabled, protected by access controls.
+- [ ] Swagger examples/schemas contain no real secrets, tokens, personal data, or sensitive internal details.
+- [ ] Dependency and container security checks before production.
+
+## Production security gate
+- [ ] OWASP ASVS 5.0 Level 2 requirements assessed with evidence.
+- [ ] OWASP API Security Top 10 risks mapped to controls and tests.
+- [ ] Separate Identity and Business PostgreSQL databases, users, credentials and migration roles.
+- [ ] Admin panel uses separate origin/session and MFA/passkeys.
+- [ ] RBAC is deny-by-default and checked server-side on every request/object/action.
+- [ ] BOLA/IDOR, mass-assignment and privilege-escalation negative tests pass.
+- [ ] Telegram initData tampering, expiry and replay tests pass.
+- [ ] Session rotation, refresh reuse detection and revocation tests pass.
+- [ ] CSRF, CORS, CSP, security headers and TLS configuration reviewed.
+- [ ] Distributed rate limits and resource quotas tested across multiple API replicas.
+- [ ] SSRF and open-redirect protections tested.
+- [ ] SQL injection, XSS, request-size, parser and validation tests pass.
+- [ ] Secrets scanning, SAST, dependency audit, container scan and SBOM run in CI.
+- [ ] Database connections are pooled and bounded; slow-query monitoring enabled.
+- [ ] k6 load, burst and soak tests meet documented SLO thresholds.
+- [ ] WAF/DDoS protection and origin firewall configured.
+- [ ] Encrypted backups and point-in-time recovery configured where supported.
+- [ ] Restore drill completed and RPO/RTO documented.
+- [ ] Monitoring, alerts, incident response and credential rotation runbooks tested.
+- [ ] Independent penetration test or qualified security review completed.
+- [ ] No unresolved critical/high vulnerabilities at release.

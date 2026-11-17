@@ -1,0 +1,15 @@
+{
+  "name": "mall-shop",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@latest",
+  "scripts": {
+    "dev": "pnpm --parallel --filter @mall-shop/frontend --filter @mall-shop/api --filter @mall-shop/worker dev",
+    "dev:infra": "docker compose up -d",
+    "infra:down": "docker compose down",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test"
+  }
+}

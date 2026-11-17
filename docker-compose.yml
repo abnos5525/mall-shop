@@ -1,0 +1,56 @@
+services:
+  identity-postgres:
+    image: postgres:17-alpine
+    container_name: mall-shop-identity-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: identity_app
+      POSTGRES_PASSWORD: identity_dev
+      POSTGRES_DB: dropclub_identity
+    ports:
+      - "5433:5432"
+    volumes:
+      - identity_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U identity_app -d dropclub_identity"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  business-postgres:
+    image: postgres:17-alpine
+    container_name: mall-shop-business-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: business_app
+      POSTGRES_PASSWORD: business_dev
+      POSTGRES_DB: dropclub_business
+    ports:
+      - "5434:5432"
+    volumes:
+      - business_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U business_app -d dropclub_business"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: mall-shop-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  identity_postgres_data:
+  business_postgres_data:
+  redis_data:

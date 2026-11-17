@@ -1,0 +1,15 @@
+node_modules
+.next
+dist
+coverage
+.env
+.env.*
+!.env.example
+.DS_Store
+*.log
+backend/packages/database/generated
+
+.cursor/
+AGENTS.md
+PROMPTS.md
+START-HERE.md
