@@ -3,6 +3,7 @@ import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fa
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger } from 'nestjs-pino';
 import helmet from '@fastify/helmet';
+import cookie from '@fastify/cookie';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
@@ -20,9 +21,19 @@ async function bootstrap(): Promise<void> {
   app.setGlobalPrefix('api/v1');
   const fastify = app.getHttpAdapter().getInstance();
   await fastify.register(requestIdPlugin);
+  await fastify.register(cookie);
   await fastify.register(helmet, {
     contentSecurityPolicy: false,
     crossOriginEmbedderPolicy: false,
+  });
+
+  const configService = app.get(ConfigService);
+  const appConfig = configService.get<AppConfig>('app');
+
+  app.enableCors({
+    origin: [appConfig?.frontendOrigin ?? 'http://localhost:3000'],
+    credentials: true,
+    methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   });
 
   app.useGlobalPipes(
@@ -33,9 +44,6 @@ async function bootstrap(): Promise<void> {
       transformOptions: { enableImplicitConversion: true },
     }),
   );
-
-  const configService = app.get(ConfigService);
-  const appConfig = configService.get<AppConfig>('app');
 
   if (appConfig?.swaggerEnabled) {
     const swaggerConfig = new DocumentBuilder()

@@ -9,6 +9,7 @@ import { validateEnv } from './config/env.validation';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { HealthModule } from './health/health.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { IdentityModule } from './identity/identity.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { PrismaModule } from './prisma/prisma.module';
     ]),
     PrismaModule,
     HealthModule,
+    IdentityModule,
   ],
   providers: [
     {

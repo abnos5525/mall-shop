@@ -9,8 +9,71 @@ datasource db {
   directUrl = env("IDENTITY_DATABASE_DIRECT_URL")
 }
 
-/// Placeholder model for Phase 1 connectivity; identity domain models arrive in Phase 2.
+/// Placeholder model retained from Phase 1 bootstrap migration.
 model SchemaBootstrap {
   id        String   @id @default("bootstrap")
   updatedAt DateTime @updatedAt
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum ConsentKind {
+  TELEGRAM_NOTIFICATIONS
+}
+
+model User {
+  id        String     @id @default(uuid()) @db.Uuid
+  status    UserStatus @default(ACTIVE)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  telegram  TelegramAccount?
+  consents  UserConsent[]
+  sessions  UserSession[]
+}
+
+model TelegramAccount {
+  id             String   @id @default(uuid()) @db.Uuid
+  userId         String   @unique @db.Uuid
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  telegramUserId BigInt   @unique
+  username       String?
+  firstName      String?
+  lastName       String?
+  languageCode   String?
+  photoUrl       String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model UserConsent {
+  id        String      @id @default(uuid()) @db.Uuid
+  userId    String      @db.Uuid
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind      ConsentKind
+  grantedAt DateTime    @default(now())
+  revokedAt DateTime?
+
+  @@unique([userId, kind])
+}
+
+model UserSession {
+  id               String    @id @default(uuid()) @db.Uuid
+  userId           String    @db.Uuid
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionTokenHash String    @unique
+  refreshTokenHash String    @unique
+  familyId         String    @db.Uuid
+  expiresAt        DateTime
+  refreshExpiresAt DateTime
+  revokedAt        DateTime?
+  lastSeenAt       DateTime  @default(now())
+  userAgent        String?
+  ipHash           String?
+  createdAt        DateTime  @default(now())
+
+  @@index([userId])
+  @@index([familyId])
 }

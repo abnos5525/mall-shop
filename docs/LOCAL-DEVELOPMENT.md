@@ -24,6 +24,8 @@ Copy each `.env.example` to `.env` (never commit `.env`):
 - `backend/services/identity/.env`
 - `backend/services/worker/.env`
 - `frontend/.env.local` from `frontend/.env.example`
+- Set `TELEGRAM_BOT_TOKEN` on Identity service for real Telegram login.
+- Use the same `INTERNAL_SERVICE_SECRET` in Identity and Business API `.env`.
 
 ## 3) Install, generate client, migrate
 ```bash
@@ -43,6 +45,8 @@ pnpm dev
 | Admin shell | http://localhost:3001 |
 | Business API | http://localhost:4000/api/v1/health |
 | Identity service | http://localhost:4100/api/v1/health |
+| Identity Swagger | http://localhost:4100/api/docs |
+| Telegram auth | `POST http://localhost:4100/api/v1/auth/telegram` `{ "initData": "..." }` |
 | Worker health | http://localhost:4200/api/v1/health |
 | Swagger (API, dev) | http://localhost:4000/api/docs |
 
