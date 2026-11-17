@@ -22,6 +22,9 @@ The product does **not** own inventory, process customer checkout, ship goods, o
 
 This is a **small, independently deployable API + worker architecture**, not a premature fleet of tiny services. Keep business domains modular so they can be extracted later if load/team boundaries justify it.
 
+## Local development
+See [docs/LOCAL-DEVELOPMENT.md](docs/LOCAL-DEVELOPMENT.md) for Docker, env setup, migrations, and smoke tests.
+
 ## Important
 - Do not assume affiliate approval, commission rates, partner APIs, or tracking support. Treat them as configuration verified with each partner.
 - Never claim a sale/commission unless a partner report or manually verified evidence confirms it.

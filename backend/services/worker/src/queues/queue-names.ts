@@ -1,0 +1,1 @@
+export const SYSTEM_PING_QUEUE = 'system.ping';

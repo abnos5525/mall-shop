@@ -1,0 +1,18 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "outDir": "./dist",
+    "rootDir": "./",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@mall-shop/database/business": ["../../packages/database/generated/business/index"],
+      "@mall-shop/database/identity": ["../../packages/database/generated/identity/index"]
+    }
+  },
+  "include": ["src/**/*", "test/**/*"]
+}

@@ -1,0 +1,35 @@
+{
+  "name": "@mall-shop/database",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./identity": {
+      "types": "./generated/identity/index.d.ts",
+      "require": "./generated/identity/index.js",
+      "import": "./generated/identity/index.js"
+    },
+    "./business": {
+      "types": "./generated/business/index.d.ts",
+      "require": "./generated/business/index.js",
+      "import": "./generated/business/index.js"
+    }
+  },
+  "scripts": {
+    "generate": "prisma generate --schema identity/prisma/schema.prisma && prisma generate --schema business/prisma/schema.prisma",
+    "migrate:dev": "prisma migrate deploy --schema identity/prisma/schema.prisma && prisma migrate deploy --schema business/prisma/schema.prisma",
+    "migrate:deploy": "prisma migrate deploy --schema identity/prisma/schema.prisma && prisma migrate deploy --schema business/prisma/schema.prisma",
+    "typecheck": "node -e \"process.exit(0)\"",
+    "lint": "node -e \"process.exit(0)\"",
+    "test": "node --test",
+    "build": "pnpm generate"
+  },
+  "dependencies": {
+    "@prisma/client": "6.19.3"
+  },
+  "devDependencies": {
+    "dotenv": "^16.6.1",
+    "prisma": "6.19.3",
+    "typescript": "^5.9.3"
+  }
+}

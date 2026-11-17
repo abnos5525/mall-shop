@@ -1,0 +1,23 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-background: #f6f3ee;
+  --color-foreground: #0f172a;
+  --color-card: #fffdf9;
+  --color-muted: #64748b;
+  --color-border: #e7e0d4;
+  --color-accent: #3f8f55;
+  --color-accent-foreground: #f8fff9;
+  --font-sans: 'Segoe UI', Tahoma, 'Noto Sans Arabic', 'Vazirmatn', sans-serif;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+  }
+}
