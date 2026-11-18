@@ -47,6 +47,16 @@ export async function createAdminOffer(
   return (await response.json()) as AdminOfferRow;
 }
 
+export async function fetchOfferAnalytics(accessToken: string, offerId: string) {
+  const response = await fetch(`${apiBase()}/admin/affiliate/analytics/offers/${offerId}`, {
+    headers: authHeaders(accessToken),
+  });
+  if (!response.ok) {
+    throw new Error(`analytics failed (${response.status})`);
+  }
+  return response.json();
+}
+
 export async function publishAdminOffer(accessToken: string, id: string): Promise<void> {
   const response = await fetch(`${apiBase()}/admin/offers/${id}/publish`, {
     method: 'POST',

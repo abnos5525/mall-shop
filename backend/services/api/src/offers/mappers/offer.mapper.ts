@@ -32,5 +32,6 @@ export function toPublicOfferDetail(offer: Offer): PublicOfferDetail {
     description: offer.description,
     terms: offer.terms,
     checkedAt: offer.checkedAt?.toISOString() ?? null,
+    usesAffiliateDestination: Boolean(offer.affiliateUrl),
   };
 }

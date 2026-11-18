@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import {
   createAdminOffer,
+  fetchOfferAnalytics,
   listAdminOffers,
   publishAdminOffer,
   type AdminOfferRow,
@@ -17,6 +18,7 @@ export function AdminOffersPanel() {
   const [merchantName, setMerchantName] = useState('');
   const [priceCurrent, setPriceCurrent] = useState('');
   const [destinationUrl, setDestinationUrl] = useState('https://');
+  const [clickStats, setClickStats] = useState<Record<string, string>>({});
 
   const token =
     typeof window !== 'undefined' ? sessionStorage.getItem('dc_admin_access') : null;
@@ -30,6 +32,16 @@ export function AdminOffersPanel() {
     try {
       const data = await listAdminOffers(token);
       setOffers(data.items);
+      const stats: Record<string, string> = {};
+      for (const row of data.items) {
+        try {
+          const analytics = await fetchOfferAnalytics(token, row.id);
+          stats[row.id] = `${analytics.totalClicks} clicks (${analytics.clicksLast7Days} / 7d)`;
+        } catch {
+          stats[row.id] = '—';
+        }
+      }
+      setClickStats(stats);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Failed to load offers');
     }
@@ -116,7 +128,7 @@ export function AdminOffersPanel() {
             <div>
               <p className="font-medium">{offer.title}</p>
               <p className="text-xs text-[color:var(--color-muted)]">
-                {offer.slug} · {offer.status}
+                {offer.slug} · {offer.status} · {clickStats[offer.id] ?? '…'}
               </p>
             </div>
             {offer.status !== 'PUBLISHED' ? (

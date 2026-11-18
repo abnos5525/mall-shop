@@ -28,6 +28,16 @@ export interface PublicOfferDetail extends PublicOfferSummary {
   description: string | null;
   terms: string | null;
   checkedAt: string | null;
+  usesAffiliateDestination: boolean;
+}
+
+export interface OfferClickAnalytics {
+  offerId: string;
+  offerSlug: string;
+  totalClicks: number;
+  clicksLast7Days: number;
+  affiliateClicks: number;
+  directClicks: number;
 }
 
 export interface CursorPageMeta {

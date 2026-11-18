@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { fetchOfferBySlug } from '@/lib/api/catalog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { OutboundOfferLink } from '@/components/outbound-offer-link';
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -38,9 +39,10 @@ export default async function OfferDetailPage({ params }: Props) {
             </p>
           ) : null}
           {offer.terms ? <p className="text-xs text-muted">شرایط: {offer.terms}</p> : null}
-          <p className="text-xs text-muted">
-            لینک خروجی در فاز ۵ از مسیر امن `/go` عبور می‌کند؛ فعلاً فقط جزئیات نمایش داده می‌شود.
-          </p>
+          <OutboundOfferLink
+            slug={offer.slug}
+            usesAffiliateDestination={offer.usesAffiliateDestination}
+          />
         </CardContent>
       </Card>
     </main>

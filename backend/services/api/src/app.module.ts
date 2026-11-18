@@ -12,6 +12,7 @@ import { HealthModule } from './health/health.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { IdentityModule } from './identity/identity.module';
 import { OffersModule } from './offers/offers.module';
+import { AffiliateModule } from './affiliate/affiliate.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { OffersModule } from './offers/offers.module';
             'req.headers.cookie',
             'req.body.initData',
             'req.body.telegramInitData',
+            'req.headers.idempotency-key',
           ],
           remove: true,
         },
@@ -52,6 +54,7 @@ import { OffersModule } from './offers/offers.module';
     HealthModule,
     IdentityModule,
     OffersModule,
+    AffiliateModule,
   ],
   providers: [
     {

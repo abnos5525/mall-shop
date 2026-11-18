@@ -47,6 +47,7 @@ pnpm dev
 | Worker health | http://localhost:4200/api/v1/health |
 | Swagger (API, dev) | http://localhost:4000/api/docs |
 | Public offers | `GET http://localhost:4000/api/v1/offers` |
+| Tracked redirect | `GET http://localhost:4000/api/v1/go/:slug` → 302 merchant URL |
 | Admin offers | `POST http://localhost:4000/api/v1/admin/offers` (Bearer admin token) |
 
 ## 5) First admin user (Phase 3)
