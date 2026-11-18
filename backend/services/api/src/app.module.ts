@@ -13,6 +13,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { IdentityModule } from './identity/identity.module';
 import { OffersModule } from './offers/offers.module';
 import { AffiliateModule } from './affiliate/affiliate.module';
+import { EngagementModule } from './engagement/engagement.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { AffiliateModule } from './affiliate/affiliate.module';
     IdentityModule,
     OffersModule,
     AffiliateModule,
+    EngagementModule,
   ],
   providers: [
     {

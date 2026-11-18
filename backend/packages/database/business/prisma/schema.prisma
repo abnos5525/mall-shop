@@ -16,15 +16,16 @@ enum OfferStatus {
 }
 
 model Category {
-  id          String   @id
-  nameFa      String
-  nameEn      String?
-  description String?
-  sortOrder   Int      @default(0)
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  offers      Offer[]
+  id             String           @id
+  nameFa         String
+  nameEn         String?
+  description    String?
+  sortOrder      Int              @default(0)
+  isActive       Boolean          @default(true)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  offers         Offer[]
+  demandRequests DemandRequest[]
 
   @@index([isActive, sortOrder])
 }
@@ -68,6 +69,7 @@ model Offer {
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
   outboundClicks   OutboundClick[]
+  favorites        Favorite[]
 
   @@index([status, publishedAt(sort: Desc)])
   @@index([categoryId, status])
@@ -93,4 +95,42 @@ model OutboundClick {
 
   @@index([offerId, createdAt(sort: Desc)])
   @@index([createdAt])
+}
+
+model Favorite {
+  id        String   @id @default(uuid()) @db.Uuid
+  subjectId String   @db.Uuid
+  offerId   String   @db.Uuid
+  offer     Offer    @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([subjectId, offerId])
+  @@index([subjectId, createdAt(sort: Desc)])
+}
+
+enum DemandRequestStatus {
+  PENDING
+  REVIEWED
+  CLOSED
+  REJECTED
+}
+
+model DemandRequest {
+  id             String              @id @default(uuid()) @db.Uuid
+  subjectId      String              @db.Uuid
+  categoryId     String
+  category       Category            @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  relatedOfferId String?             @db.Uuid
+  description    String
+  budgetAmount   Decimal?            @db.Decimal(18, 2)
+  budgetCurrency String?             @default("IRR")
+  consentGivenAt DateTime
+  status         DemandRequestStatus @default(PENDING)
+  adminNotes     String?
+  reviewedAt     DateTime?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  @@index([status, createdAt(sort: Desc)])
+  @@index([subjectId, createdAt(sort: Desc)])
 }

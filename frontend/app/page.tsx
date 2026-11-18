@@ -34,6 +34,11 @@ export default async function HomePage() {
               همه پیشنهادها
             </Button>
           </Link>
+          <Link href="/favorites">
+            <Button type="button" variant="outline" className="text-sm">
+              علاقه‌مندی‌ها
+            </Button>
+          </Link>
         </div>
       </header>
 

@@ -41,3 +41,4 @@ export interface InternalSessionVerification {
 }
 
 export * from './offers';
+export * from './engagement';

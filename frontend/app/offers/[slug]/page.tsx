@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import { fetchOfferBySlug } from '@/lib/api/catalog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { OutboundOfferLink } from '@/components/outbound-offer-link';
+import { FavoriteOfferButton } from '@/components/favorite-offer-button';
+import { DemandRequestForm } from '@/components/demand-request-form';
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -39,10 +41,12 @@ export default async function OfferDetailPage({ params }: Props) {
             </p>
           ) : null}
           {offer.terms ? <p className="text-xs text-muted">شرایط: {offer.terms}</p> : null}
+          <FavoriteOfferButton offerId={offer.id} />
           <OutboundOfferLink
             slug={offer.slug}
             usesAffiliateDestination={offer.usesAffiliateDestination}
           />
+          <DemandRequestForm categoryId={offer.categoryId} relatedOfferId={offer.id} />
         </CardContent>
       </Card>
     </main>

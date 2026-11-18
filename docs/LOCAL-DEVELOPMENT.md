@@ -48,6 +48,8 @@ pnpm dev
 | Swagger (API, dev) | http://localhost:4000/api/docs |
 | Public offers | `GET http://localhost:4000/api/v1/offers` |
 | Tracked redirect | `GET http://localhost:4000/api/v1/go/:slug` → 302 merchant URL |
+| Favorites | `POST/DELETE http://localhost:4000/api/v1/me/favorites/:offerId` (Bearer user token) |
+| Demand request | `POST http://localhost:4000/api/v1/demand-requests` (`consent: true` required) |
 | Admin offers | `POST http://localhost:4000/api/v1/admin/offers` (Bearer admin token) |
 
 ## 5) First admin user (Phase 3)

@@ -62,4 +62,6 @@ export const ADMIN_PERMISSIONS = {
   OFFERS_WRITE: 'offers.write',
   OFFERS_PUBLISH: 'offers.publish',
   CATEGORIES_WRITE: 'categories.write',
+  DEMAND_READ: 'demand.read',
+  DEMAND_MODERATE: 'demand.moderate',
 } as const;

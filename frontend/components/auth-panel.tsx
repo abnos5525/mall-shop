@@ -5,6 +5,7 @@ import type { AuthSessionResponse } from '@mall-shop/contracts';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { fetchBusinessMe, fetchCurrentUser, loginWithTelegramInitData } from '@/lib/identity/client';
+import { writeUserAccessToken } from '@/lib/user-access';
 import { useTelegramWebApp } from '@/components/telegram/telegram-web-app-bridge';
 
 export function AuthPanel() {
@@ -31,6 +32,7 @@ export function AuthPanel() {
     setError(null);
     try {
       const result = await loginWithTelegramInitData(bridge.initData);
+      writeUserAccessToken(result.accessToken);
       await fetchCurrentUser(result.accessToken);
       const business = (await fetchBusinessMe(result.accessToken)) as { subjectId?: string };
       setSession(result);

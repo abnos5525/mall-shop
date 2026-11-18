@@ -1,66 +1,57 @@
 # Progress
 
-- Current authorized phase: **Phase 5** (completed — Phase 6 locked until user sends `برو بعدی`)
-- Status: Phase 5 completed
-- Last completed phase: Phase 5 — Affiliate tracking
-- Next phase: Phase 6 — Favorites and demand requests
+- Current authorized phase: **Phase 6** (completed — Phase 7 locked until user sends `برو بعدی`)
+- Status: Phase 6 completed
+- Last completed phase: Phase 6 — Favorites and demand requests
+- Next phase: Phase 7 — Notifications and worker jobs
 
-## Phase 1–4 checklists
-See git history / prior reports — all complete.
-
-## Phase 5 checklist
-- [x] Business DB: `OutboundClick`, `AffiliatePartner`, optional `Offer.partnerId`
-- [x] Migration `20251118160000_phase5_affiliate`
-- [x] `GET /api/v1/go/:slug` — server-side slug resolve, http/https only, 302 redirect
-- [x] Affiliate URL preferred when configured; else direct `destinationUrl`
-- [x] Click row: destination kind, redirect host only (no full URL in DB), hashed visitor, optional `subjectId`
-- [x] `Idempotency-Key` dedupe + throttle 30/min on `/go`
-- [x] Admin: `GET /admin/affiliate/analytics/offers`, per-offer stats, partner list/create
-- [x] Public offer detail: `usesAffiliateDestination` + outbound CTA via `/go`
-- [x] Admin UI: click counts on offer list
-- [x] Tests: `go.service.spec.ts`, URL util
+## Phase 6 checklist
+- [x] Business DB: `Favorite`, `DemandRequest` + migration `20251118170000_phase6_favorites_demand`
+- [x] Identity permissions: `demand.read`, `demand.moderate`
+- [x] `GET/POST/DELETE /me/favorites` (Bearer user session)
+- [x] `POST /demand-requests` with `consent === true`, throttle, 5/day per subject
+- [x] `GET /demand-requests/mine`
+- [x] Admin: `GET/PATCH /admin/demand-requests` + audit on moderate
+- [x] Frontend: favorites page, favorite toggle, demand form on offer detail
+- [x] Auth panel stores access token in `sessionStorage` for API calls
+- [x] Admin demand moderation panel
+- [x] Test: `demand.service.spec.ts` (consent)
 - [x] typecheck / test / build / lint verified
 
-## Production release gates (not yet authorized)
-- [ ] ASVS 5.0 Level 2 assessment
-- [ ] OWASP API Top 10 verification
-- [x] Admin MFA/RBAC/immutable audit (baseline slice)
-- [ ] SAST/DAST/dependency/container/secret scanning
-- [ ] Load/soak/burst tests
-- [ ] WAF/DDoS and production network hardening
-- [ ] Backup restore and disaster recovery drill
-- [ ] Independent penetration test
+## Earlier phases
+Phases 1–5 complete (see prior PROGRESS revisions / git history).
 
-## Last agent report (Phase 5)
+## Production release gates (not yet authorized)
+Unchanged — see Phase 5 report.
+
+## Last agent report (Phase 6)
 
 ### Summary
-Outbound traffic for published offers now flows through `GET /api/v1/go/:slug`. The API resolves the offer by slug, validates redirect targets (http/https), prefers `affiliateUrl` when set, records an `OutboundClick` event (hostname + hashed visitor, optional logged-in `subjectId`), and returns HTTP 302. No client-supplied redirect URLs. Admin endpoints expose basic click totals (all-time, 7-day, affiliate vs direct). Mini App detail page uses the tracked link with disclosure copy.
+Logged-in Telegram users can favorite published offers and submit minimal “I want this” demand requests with explicit consent. Favorites and demands are keyed by Identity `subjectId` in the Business DB. Demand creation is rate-limited (HTTP throttle + 5 requests per 24h per user). Admins list and moderate demands with RBAC and audit.
 
-### Key endpoints
+### Key endpoints (Business API)
 | Audience | Endpoint |
 |----------|----------|
-| Public | `GET /api/v1/go/:slug` (optional `Idempotency-Key`, optional Bearer) |
-| Admin | `GET /api/v1/admin/affiliate/analytics/offers` |
-| Admin | `GET /api/v1/admin/affiliate/analytics/offers/:offerId` |
-| Admin | `GET/POST /api/v1/admin/affiliate/partners` |
+| User | `GET/POST/DELETE /api/v1/me/favorites/:offerId` |
+| User | `POST /api/v1/demand-requests`, `GET /api/v1/demand-requests/mine` |
+| Admin | `GET /api/v1/admin/demand-requests`, `PATCH .../:id` |
 
 ### Commands run (results)
-- `pnpm db:migrate` — applied `20251118160000_phase5_affiliate`
+- `pnpm db:migrate` — phase 6 identity + business migrations
 - `pnpm typecheck` — pass
-- `pnpm test` — pass (API: 7 tests)
-- `pnpm lint` — pass (after eslint --fix on affiliate)
+- `pnpm test` — pass (API: 8 tests)
+- `pnpm lint` — pass
 - `pnpm build` — pass
 
 ### Manual test
-1. Publish an offer with `destinationUrl` (and optional `affiliateUrl`).
-2. Open `http://localhost:4000/api/v1/go/<slug>` or tap **رفتن به فروشنده** on offer detail.
-3. Admin panel shows updated click counts after refresh.
+1. Mini App: login with Telegram → open offer → favorite + submit demand with consent checkbox.
+2. `/favorites` lists saved offers.
+3. Admin: review pending demands → Mark reviewed.
 
 ### Known limitations
-- Clicks are not sales or commission; no partner API sync.
-- Rate limit is global throttler per IP (in-process), not Redis-backed yet.
-- Partner registry is metadata-only; offers do not require `partnerId`.
-- No public click analytics export.
+- User access token in `sessionStorage` is dev-oriented; HttpOnly-only hardening deferred.
+- Favorite button does not preload “already saved” state on page load.
+- No user notification when demand is reviewed (Phase 7).
 
 ### Blockers
-None for Phase 5 exit criteria.
+None for Phase 6 exit criteria.

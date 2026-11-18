@@ -47,6 +47,35 @@ export async function createAdminOffer(
   return (await response.json()) as AdminOfferRow;
 }
 
+export type AdminDemandRow = {
+  id: string;
+  subjectId: string;
+  categoryId: string;
+  description: string;
+  status: string;
+};
+
+export async function listDemandRequests(accessToken: string): Promise<{ items: AdminDemandRow[] }> {
+  const response = await fetch(`${apiBase()}/admin/demand-requests?limit=30`, {
+    headers: authHeaders(accessToken),
+  });
+  if (!response.ok) {
+    throw new Error(`demand list failed (${response.status})`);
+  }
+  return (await response.json()) as { items: AdminDemandRow[] };
+}
+
+export async function moderateDemandRequest(accessToken: string, id: string, status: string) {
+  const response = await fetch(`${apiBase()}/admin/demand-requests/${id}`, {
+    method: 'PATCH',
+    headers: authHeaders(accessToken),
+    body: JSON.stringify({ status }),
+  });
+  if (!response.ok) {
+    throw new Error(`moderate failed (${response.status})`);
+  }
+}
+
 export async function fetchOfferAnalytics(accessToken: string, offerId: string) {
   const response = await fetch(`${apiBase()}/admin/affiliate/analytics/offers/${offerId}`, {
     headers: authHeaders(accessToken),
