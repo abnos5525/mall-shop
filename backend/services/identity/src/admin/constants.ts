@@ -7,6 +7,10 @@ export const PERMISSIONS = {
   ROLES_GRANT: 'roles.grant',
   SESSIONS_READ: 'admin.sessions.read',
   SESSIONS_REVOKE: 'admin.sessions.revoke',
+  OFFERS_READ: 'offers.read',
+  OFFERS_WRITE: 'offers.write',
+  OFFERS_PUBLISH: 'offers.publish',
+  CATEGORIES_WRITE: 'categories.write',
 } as const;
 
 export type PermissionId = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

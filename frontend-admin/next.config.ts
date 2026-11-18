@@ -9,6 +9,8 @@ dotenv.config({ path: path.join(repoRoot, '.env.local') });
 const identityBase =
   process.env.NEXT_PUBLIC_IDENTITY_BASE_URL ?? 'http://localhost:4100/api/v1';
 const identityOrigin = new URL(identityBase).origin;
+const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000/api/v1';
+const apiOrigin = new URL(apiBase).origin;
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
@@ -23,7 +25,7 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              `connect-src 'self' ${identityOrigin}`,
+              `connect-src 'self' ${identityOrigin} ${apiOrigin}`,
               "script-src 'self' 'unsafe-inline'",
             ].join('; '),
           },

@@ -33,6 +33,6 @@ import { MfaChallengeStore } from './mfa-challenge.store';
     AdminWebauthnService,
     MfaChallengeStore,
   ],
-  exports: [RbacService, AdminAuditService],
+  exports: [RbacService, AdminAuditService, AdminSessionService],
 })
 export class AdminModule {}

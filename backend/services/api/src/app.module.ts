@@ -11,6 +11,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { HealthModule } from './health/health.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { IdentityModule } from './identity/identity.module';
+import { OffersModule } from './offers/offers.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { IdentityModule } from './identity/identity.module';
     PrismaModule,
     HealthModule,
     IdentityModule,
+    OffersModule,
   ],
   providers: [
     {

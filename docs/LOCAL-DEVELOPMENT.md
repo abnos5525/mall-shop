@@ -46,6 +46,8 @@ pnpm dev
 | Telegram auth | `POST http://localhost:4100/api/v1/auth/telegram` `{ "initData": "..." }` |
 | Worker health | http://localhost:4200/api/v1/health |
 | Swagger (API, dev) | http://localhost:4000/api/docs |
+| Public offers | `GET http://localhost:4000/api/v1/offers` |
+| Admin offers | `POST http://localhost:4000/api/v1/admin/offers` (Bearer admin token) |
 
 ## 5) First admin user (Phase 3)
 After migrations, provision **one** admin (no default password in repo). TOTP secret and recovery codes are printed once — store them offline.
