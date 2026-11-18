@@ -1,3 +1,4 @@
+import { resolveBackendEnvFile } from './config/backend-env-file';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
@@ -15,6 +16,7 @@ import { IdentityModule } from './identity/identity.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: resolveBackendEnvFile(),
       validate: validateEnv,
       load: [appConfig],
     }),

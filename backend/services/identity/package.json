@@ -8,9 +8,13 @@
     "start": "node dist/src/main.js",
     "typecheck": "tsc -p tsconfig.build.json --noEmit",
     "lint": "eslint \"src/**/*.ts\"",
-    "test": "jest --passWithNoTests"
+    "test": "jest --passWithNoTests",
+    "provision-admin": "tsx scripts/provision-admin.ts"
   },
   "dependencies": {
+    "argon2": "^0.43.0",
+    "otplib": "^12.0.1",
+    "@simplewebauthn/server": "^13.2.2",
     "@fastify/cookie": "^11.0.2",
     "@fastify/helmet": "^13.0.1",
     "@fastify/static": "^10.1.2",
@@ -32,6 +36,7 @@
     "rxjs": "^7.8.2"
   },
   "devDependencies": {
+    "tsx": "^4.20.5",
     "@nestjs/cli": "^11.0.10",
     "@nestjs/testing": "^11.1.6",
     "@types/jest": "^29.5.14",

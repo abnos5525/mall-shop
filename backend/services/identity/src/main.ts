@@ -31,7 +31,7 @@ async function bootstrap(): Promise<void> {
   const appConfig = configService.get<AppConfig>('app');
 
   app.enableCors({
-    origin: [appConfig?.frontendOrigin ?? 'http://localhost:3000'],
+    origin: [appConfig?.frontendOrigin ?? 'http://localhost:3000', appConfig?.adminOrigin ?? 'http://localhost:3001'],
     credentials: true,
     methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   });

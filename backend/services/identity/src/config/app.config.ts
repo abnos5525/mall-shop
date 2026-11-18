@@ -14,6 +14,12 @@ export type AppConfig = {
   cookieSecure: boolean;
   internalServiceSecret?: string;
   redisUrl: string;
+  sessionSecret: string;
+  adminOrigin: string;
+  adminSessionAccessTtlSeconds: number;
+  adminSessionRefreshTtlSeconds: number;
+  webauthnRpId: string;
+  webauthnOrigin: string;
 };
 
 export const appConfig = registerAs(
@@ -32,5 +38,11 @@ export const appConfig = registerAs(
     cookieSecure: process.env.COOKIE_SECURE === 'true',
     internalServiceSecret: process.env.INTERNAL_SERVICE_SECRET,
     redisUrl: process.env.REDIS_URL ?? 'redis://localhost:6379',
+    sessionSecret: process.env.SESSION_SECRET ?? 'dev-only-change-me-32-characters-min',
+    adminOrigin: process.env.ADMIN_ORIGIN ?? 'http://localhost:3001',
+    adminSessionAccessTtlSeconds: Number(process.env.ADMIN_SESSION_ACCESS_TTL_SECONDS ?? 900),
+    adminSessionRefreshTtlSeconds: Number(process.env.ADMIN_SESSION_REFRESH_TTL_SECONDS ?? 86_400),
+    webauthnRpId: process.env.WEBAUTHN_RP_ID ?? 'localhost',
+    webauthnOrigin: process.env.WEBAUTHN_ORIGIN ?? 'http://localhost:3001',
   }),
 );

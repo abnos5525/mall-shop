@@ -1,4 +1,10 @@
+import path from 'node:path';
+import dotenv from 'dotenv';
 import type { NextConfig } from 'next';
+
+const repoRoot = path.join(__dirname, '..');
+dotenv.config({ path: path.join(repoRoot, '.env') });
+dotenv.config({ path: path.join(repoRoot, '.env.local') });
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000/api/v1';
 const apiOrigin = new URL(apiBase).origin;

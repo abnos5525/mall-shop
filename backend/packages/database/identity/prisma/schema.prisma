@@ -77,3 +77,148 @@ model UserSession {
   @@index([userId])
   @@index([familyId])
 }
+
+enum AdminUserStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum PrivilegedActionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model AdminUser {
+  id           String          @id @default(uuid()) @db.Uuid
+  email        String          @unique
+  passwordHash String
+  displayName  String?
+  status       AdminUserStatus @default(ACTIVE)
+  totpEnabled  Boolean         @default(false)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  sessions     AdminSession[]
+  roleAssignments AdminRoleAssignment[]
+  webauthnCredentials WebAuthnCredential[]
+  totpSecret   AdminTotpSecret?
+  recoveryCodes AdminRecoveryCode[]
+  auditEvents  AdminAuditEvent[] @relation("AuditActor")
+  requestedActions AdminPrivilegedAction[] @relation("RequestedBy")
+  approvedActions  AdminPrivilegedAction[] @relation("ApprovedBy")
+}
+
+model AdminSession {
+  id               String    @id @default(uuid()) @db.Uuid
+  adminUserId      String    @db.Uuid
+  adminUser        AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  sessionTokenHash String    @unique
+  refreshTokenHash String    @unique
+  familyId         String    @db.Uuid
+  expiresAt        DateTime
+  refreshExpiresAt DateTime
+  revokedAt        DateTime?
+  lastSeenAt       DateTime  @default(now())
+  userAgent        String?
+  ipHash           String?
+  stepUpValidUntil DateTime?
+  createdAt        DateTime  @default(now())
+
+  @@index([adminUserId])
+  @@index([familyId])
+}
+
+model Permission {
+  id          String           @id
+  description String
+  roles       RolePermission[]
+}
+
+model Role {
+  id          String                @id
+  name        String
+  assignments AdminRoleAssignment[]
+  permissions RolePermission[]
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+model AdminRoleAssignment {
+  id              String    @id @default(uuid()) @db.Uuid
+  adminUserId     String    @db.Uuid
+  roleId          String
+  adminUser       AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  role            Role      @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  grantedAt       DateTime  @default(now())
+  grantedByAdminId String?  @db.Uuid
+
+  @@unique([adminUserId, roleId])
+}
+
+model WebAuthnCredential {
+  id           String    @id @default(uuid()) @db.Uuid
+  adminUserId  String    @db.Uuid
+  adminUser    AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  credentialId String    @unique
+  publicKey    Bytes
+  counter      BigInt    @default(0)
+  transports   String?
+  createdAt    DateTime  @default(now())
+}
+
+model AdminTotpSecret {
+  adminUserId String    @id @db.Uuid
+  adminUser   AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  secretEnc   String
+  createdAt   DateTime  @default(now())
+}
+
+model AdminRecoveryCode {
+  id          String    @id @default(uuid()) @db.Uuid
+  adminUserId String    @db.Uuid
+  adminUser   AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  codeHash    String
+  usedAt      DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([adminUserId])
+}
+
+model AdminAuditEvent {
+  id             String   @id @default(uuid()) @db.Uuid
+  actorAdminId   String?  @db.Uuid
+  actor          AdminUser? @relation("AuditActor", fields: [actorAdminId], references: [id], onDelete: SetNull)
+  action         String
+  targetType     String?
+  targetId       String?
+  reason         String?
+  metadata       Json?
+  requestId      String?
+  createdAt      DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([actorAdminId])
+}
+
+model AdminPrivilegedAction {
+  id                    String                 @id @default(uuid()) @db.Uuid
+  actionType            String
+  status                PrivilegedActionStatus @default(PENDING)
+  requestedByAdminId    String                 @db.Uuid
+  requestedBy           AdminUser              @relation("RequestedBy", fields: [requestedByAdminId], references: [id], onDelete: Cascade)
+  targetAdminId         String?                @db.Uuid
+  payload               Json
+  approvedByAdminId     String?                @db.Uuid
+  approvedBy            AdminUser?             @relation("ApprovedBy", fields: [approvedByAdminId], references: [id], onDelete: SetNull)
+  createdAt             DateTime               @default(now())
+  resolvedAt            DateTime?
+
+  @@index([status])
+}

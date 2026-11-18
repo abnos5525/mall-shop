@@ -23,7 +23,9 @@ The product does **not** own inventory, process customer checkout, ship goods, o
 This is a **small, independently deployable API + worker architecture**, not a premature fleet of tiny services. Keep business domains modular so they can be extracted later if load/team boundaries justify it.
 
 ## Local development
-See [docs/LOCAL-DEVELOPMENT.md](docs/LOCAL-DEVELOPMENT.md) for Docker, env setup, migrations, and smoke tests.
+See [docs/LOCAL-DEVELOPMENT.md](docs/LOCAL-DEVELOPMENT.md) for Docker, migrations, and smoke tests.
+
+Env: one file `backend/.env` for all backend processes; one file at repo root (`.env` or `.env.local`) for the Mini App frontend.
 
 ## Important
 - Do not assume affiliate approval, commission rates, partner APIs, or tracking support. Treat them as configuration verified with each partner.

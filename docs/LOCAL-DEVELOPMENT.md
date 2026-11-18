@@ -1,4 +1,4 @@
-# Local development (Phase 1)
+# Local development
 
 ## Prerequisites
 - Node.js 22+
@@ -17,15 +17,12 @@ Services:
 
 Migration roles (`identity_migrator`, `business_migrator`) are created only by local Docker init scripts. Do not copy these credentials to production.
 
-## 2) Environment files
-Copy each `.env.example` to `.env` (never commit `.env`):
-- `backend/packages/database/.env`
-- `backend/services/api/.env`
-- `backend/services/identity/.env`
-- `backend/services/worker/.env`
-- `frontend/.env.local` from `frontend/.env.example`
-- Set `TELEGRAM_BOT_TOKEN` on Identity service for real Telegram login.
-- Use the same `INTERNAL_SERVICE_SECRET` in Identity and Business API `.env`.
+## 2) Environment files (two files only)
+Copy examples and edit (never commit real `.env` files):
+- **Backend (all services + Prisma):** `backend/.env.example` → `backend/.env`
+- **Frontend (Next.js):** `/.env.example` → `/.env` or `/.env.local` at the **repo root**
+
+In `backend/.env` set `TELEGRAM_BOT_TOKEN` (from BotFather). `INTERNAL_SERVICE_SECRET` is defined once there for API + Identity.
 
 ## 3) Install, generate client, migrate
 ```bash
@@ -50,7 +47,16 @@ pnpm dev
 | Worker health | http://localhost:4200/api/v1/health |
 | Swagger (API, dev) | http://localhost:4000/api/docs |
 
-## 5) Verification
+## 5) First admin user (Phase 3)
+After migrations, provision **one** admin (no default password in repo). TOTP secret and recovery codes are printed once — store them offline.
+
+```bash
+pnpm provision-admin -- you@example.com YourStrongPassword
+```
+
+Then open http://localhost:3001 and sign in with email/password + TOTP (or a recovery code). Admin API lives on Identity (`ADMIN_ORIGIN` / `WEBAUTHN_*` in `backend/.env`).
+
+## 6) Verification
 ```bash
 pnpm typecheck
 pnpm lint

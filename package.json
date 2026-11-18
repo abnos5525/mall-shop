@@ -4,12 +4,13 @@
   "version": "0.1.0",
   "packageManager": "pnpm@9.15.9",
   "scripts": {
-    "prebuild": "pnpm --filter @mall-shop/contracts build && pnpm --filter @mall-shop/database generate",
+    "prebuild": "pnpm --filter @mall-shop/contracts build && dotenv -e backend/.env -- pnpm --filter @mall-shop/database generate",
     "dev": "pnpm --parallel --filter @mall-shop/frontend --filter @mall-shop/api --filter @mall-shop/identity --filter @mall-shop/worker dev",
     "dev:infra": "docker compose up -d",
     "infra:down": "docker compose down",
-    "db:generate": "pnpm --filter @mall-shop/database generate",
-    "db:migrate": "pnpm --filter @mall-shop/database migrate:dev",
+    "provision-admin": "dotenv -e backend/.env -- pnpm --filter @mall-shop/identity provision-admin",
+    "db:generate": "dotenv -e backend/.env -- pnpm --filter @mall-shop/database generate",
+    "db:migrate": "dotenv -e backend/.env -- pnpm --filter @mall-shop/database migrate:dev",
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
     "lint": "pnpm -r lint",
@@ -20,6 +21,7 @@
     "eslint": "^9.36.0",
     "globals": "^16.4.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.44.0"
+    "typescript-eslint": "^8.44.0",
+    "dotenv-cli": "^8.0.0"
   }
 }

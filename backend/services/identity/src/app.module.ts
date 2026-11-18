@@ -1,3 +1,4 @@
+import { resolveBackendEnvFile } from './config/backend-env-file';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
@@ -10,11 +11,13 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { HealthModule } from './health/health.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: resolveBackendEnvFile(),
       validate: validateEnv,
       load: [appConfig],
     }),
@@ -43,6 +46,7 @@ import { AuthModule } from './auth/auth.module';
     PrismaModule,
     HealthModule,
     AuthModule,
+    AdminModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },

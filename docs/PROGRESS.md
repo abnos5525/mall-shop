@@ -1,9 +1,9 @@
 # Progress
 
-- Current authorized phase: **Phase 2** (completed — Phase 3 locked until user sends `برو بعدی`)
-- Status: Phase 2 completed
-- Last completed phase: Phase 2 — Identity service and Telegram authentication
-- Next phase: Phase 3 — Admin authentication and access control
+- Current authorized phase: **Phase 3** (completed — Phase 4 locked until user sends `برو بعدی`)
+- Status: Phase 3 completed
+- Last completed phase: Phase 3 — Admin authentication and access control
+- Next phase: Phase 4 — Offers and categories
 
 ## Phase 1 checklist
 - [x] Workspace and strict TypeScript tooling
@@ -30,50 +30,64 @@
 - [x] Tests: invalid/tampered/stale initData + session mapping unit tests
 - [x] typecheck / test / build / lint verified
 
+## Phase 3 checklist
+- [x] Admin DB models (AdminUser, sessions, RBAC, TOTP, recovery, WebAuthn, audit, privileged actions)
+- [x] Migration `20251118120000_phase3_admin_auth` (+ seeded roles/permissions)
+- [x] Separate admin cookies (`dc_admin_*`) and CORS for `ADMIN_ORIGIN`
+- [x] Login: argon2 password + TOTP or hashed recovery codes
+- [x] Step-up MFA window on sensitive routes
+- [x] RBAC deny-by-default guard + `rbac.service.spec.ts`
+- [x] Dual approval flow for `GRANT_SUPER_ADMIN`
+- [x] Audit events + `GET admin/audit/events`
+- [x] WebAuthn register options/verify (RP from `WEBAUTHN_*`)
+- [x] CLI `pnpm provision-admin` (no default credentials)
+- [x] `frontend-admin` login UI + Identity API client
+- [x] typecheck / test / build / lint verified
+
 ## Production release gates (not yet authorized)
 - [ ] ASVS 5.0 Level 2 assessment
 - [ ] OWASP API Top 10 verification
-- [ ] Admin MFA/RBAC/immutable audit
+- [x] Admin MFA/RBAC/immutable audit (baseline slice — hardening in Phase 9)
 - [ ] SAST/DAST/dependency/container/secret scanning
 - [ ] Load/soak/burst tests
 - [ ] WAF/DDoS and production network hardening
 - [ ] Backup restore and disaster recovery drill
 - [ ] Independent penetration test
 
-## Last agent report (Phase 2)
+## Last agent report (Phase 3)
 
 ### Summary
-Identity service now owns Telegram login, opaque session/refresh tokens, cookie-based refresh, device session listing/revocation, notification consent flag, and internal token verification. Business API validates Bearer tokens through the Identity internal API. Frontend sends raw `initData` only inside Telegram WebView.
+Identity service now hosts admin authentication on a separate session plane from Telegram users: email/password with TOTP or one-time recovery codes, optional WebAuthn registration, RBAC with deny-by-default guards, step-up for privileged routes, dual approval for granting `super_admin`, session list/revoke, and append-only audit listing. `frontend-admin` provides a dev login form against Identity. First admin is created only via `pnpm provision-admin`.
 
-### Key endpoints
-| Service | Endpoint |
-|---------|----------|
-| Identity | `POST /api/v1/auth/telegram` |
-| Identity | `POST /api/v1/auth/refresh`, `POST /api/v1/auth/logout` |
-| Identity | `GET /api/v1/auth/me`, `GET/DELETE /api/v1/auth/sessions` |
-| Identity | `POST /api/v1/internal/sessions/verify` (internal key) |
-| Business API | `GET /api/v1/me` (Bearer access token) |
+### Key endpoints (Identity)
+| Area | Endpoint |
+|------|----------|
+| Auth | `POST /api/v1/admin/auth/login`, `POST .../logout`, `GET .../me` |
+| Sessions | `GET/DELETE /api/v1/admin/auth/sessions`, `POST .../step-up` |
+| WebAuthn | `POST /api/v1/admin/auth/webauthn/register/options`, `.../verify` |
+| Access | `POST /api/v1/admin/access/super-admin/requests`, `POST .../privileged-actions/:id/approve` |
+| Audit | `GET /api/v1/admin/audit/events` |
 
 ### Commands run (results)
-- `pnpm db:migrate` — applied `20251118010000_phase2_identity_auth`
+- `pnpm install` — pass (argon2, otplib, simplewebauthn, tsx)
 - `pnpm db:generate` — pass
+- `pnpm db:migrate` — applied `20251118120000_phase3_admin_auth`
 - `pnpm typecheck` — pass
-- `pnpm test` — pass (identity: 5 tests incl. initData HMAC/stale cases)
+- `pnpm test` — pass (identity: 6 tests incl. RBAC deny-by-default)
+- `pnpm lint` — pass (eslint --fix on `backend/services/identity/src/admin`)
 - `pnpm build` — pass
-- `pnpm lint` — pass (after eslint --fix on backend)
 
 ### Manual test
-1. Set `TELEGRAM_BOT_TOKEN` in `backend/services/identity/.env` (from BotFather).
-2. Match `INTERNAL_SERVICE_SECRET` in identity + api `.env`.
-3. `pnpm dev` and open Mini App URL inside Telegram (HTTPS tunnel in real test).
-4. Tap **ورود با تلگرام** — expect profile + Business `/me` subject.
-5. Browser-only visit shows fallback message (no fake auth).
+1. Ensure `backend/.env` matches `backend/.env.example` (dual DB URLs, `ADMIN_ORIGIN`, `WEBAUTHN_*`).
+2. `pnpm dev:infra` if DB/Redis not running; `pnpm provision-admin -- <email> <password>`.
+3. Save printed TOTP secret and recovery codes; open http://localhost:3001 and log in.
+4. Optional: register passkey via WebAuthn routes (localhost RP).
 
 ### Known limitations
-- Real Telegram login requires bot token + opening app inside Telegram (or tunneled HTTPS).
-- Cross-origin cookies work on localhost; production needs `COOKIE_SECURE=true` + trusted origins.
-- Refresh-token reuse revokes family in DB; full E2E revocation test needs integration harness.
-- Admin login remains Phase 3.
+- Admin UI may mirror access token in `sessionStorage` for dev; production should prefer HttpOnly-only patterns.
+- WebAuthn login path is registration-focused in this slice; full passkey-only login can extend later.
+- Dual approval and step-up require at least two provisioned admins for realistic E2E.
+- Legacy keys (`DATABASE_URL`, `ADMIN_TELEGRAM_IDS`, `TELEGRAM_BOT_USERNAME`) are not used by current code.
 
 ### Blockers
-None for Phase 2 exit criteria.
+None for Phase 3 exit criteria.

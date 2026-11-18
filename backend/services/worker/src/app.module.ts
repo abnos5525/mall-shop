@@ -1,3 +1,4 @@
+import { resolveBackendEnvFile } from './config/backend-env-file';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
@@ -7,7 +8,11 @@ import { QueuesModule } from './queues/queues.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, validate: validateEnv }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: resolveBackendEnvFile(),
+      validate: validateEnv,
+    }),
     LoggerModule.forRoot({
       pinoHttp: {
         level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
